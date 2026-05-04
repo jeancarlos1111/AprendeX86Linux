@@ -1,0 +1,11 @@
+{
+  "name": "mipwa-terminal",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "npx serve . -l 3000",
+    "dev": "pnpm start"
+  },
+  "dependencies": {
+    "@xterm/xterm": "^6.0.0"
+  }
+}

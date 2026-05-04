@@ -1,0 +1,587 @@
+/* ========================================
+   AprendeX86 — Terminal Linux PWA
+   Diseño moderno, dark theme premium
+   ======================================== */
+
+:root {
+    /* Paleta principal */
+    --bg-deep: #0a0e17;
+    --bg-surface: #111827;
+    --bg-elevated: #1a2332;
+    --bg-terminal: #0d1117;
+
+    /* Acentos */
+    --accent: #22d3ee;
+    --accent-glow: rgba(34, 211, 238, 0.15);
+    --accent-green: #34d399;
+    --accent-yellow: #fbbf24;
+    --accent-red: #f87171;
+
+    /* Texto */
+    --text-primary: #e2e8f0;
+    --text-secondary: #94a3b8;
+    --text-muted: #475569;
+
+    /* Bordes */
+    --border: rgba(148, 163, 184, 0.08);
+    --border-light: rgba(148, 163, 184, 0.15);
+
+    /* Radios */
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+
+    /* Transiciones */
+    --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100dvh;
+    width: 100vw;
+    background-color: var(--bg-deep);
+    color: var(--text-primary);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ========================================
+   Layout principal
+   ======================================== */
+.app-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+}
+
+/* ========================================
+   Panel lateral de lecciones
+   ======================================== */
+.lessons-panel {
+    position: absolute;
+    top: 38px;
+    left: 0;
+    bottom: 0;
+    width: 250px;
+    background: var(--bg-surface);
+    padding: 1.25rem;
+    overflow-y: auto;
+    border-right: 1px solid var(--border);
+    scrollbar-width: thin;
+    scrollbar-color: var(--text-muted) transparent;
+    z-index: 20;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 4px 0 15px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+}
+
+.lessons-panel.is-open {
+    transform: translateX(0);
+}
+
+.lessons-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+    color: var(--accent);
+}
+
+.lessons-header h3 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+}
+
+.lessons-desc {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin: 0 0 1rem 0;
+}
+
+.lesson-group {
+    margin-bottom: 1rem;
+}
+
+.lesson-label {
+    display: block;
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 0.4rem;
+    padding-left: 0.25rem;
+}
+
+.lesson-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    margin-bottom: 0.25rem;
+    padding: 0.55rem 0.65rem;
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    text-align: left;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    transition: all var(--transition);
+}
+
+.lesson-btn:hover {
+    background: var(--accent-glow);
+    color: var(--accent);
+    border-color: rgba(34, 211, 238, 0.2);
+}
+
+.lesson-btn:active {
+    transform: scale(0.98);
+}
+
+.cmd-icon {
+    color: var(--accent);
+    font-weight: 700;
+    opacity: 0.6;
+}
+
+/* ========================================
+   Área del terminal
+   ======================================== */
+.terminal-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    height: 100%;
+    position: relative;
+    min-height: 0;
+}
+
+/* Barra de título tipo ventana */
+.terminal-header {
+    display: flex;
+    align-items: center;
+    padding: 0 1rem;
+    height: 38px;
+    min-height: 38px;
+    background: var(--bg-elevated);
+    border-bottom: 1px solid var(--border);
+    gap: 0.75rem;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.header-dots {
+    display: flex;
+    gap: 6px;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.dot-red { background: var(--accent-red); }
+.dot-yellow { background: var(--accent-yellow); }
+.dot-green { background: var(--accent-green); }
+
+.header-title {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    flex: 1;
+}
+
+.header-title svg {
+    opacity: 0.5;
+}
+
+.header-status {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.7rem;
+    color: var(--accent-yellow);
+    transition: color var(--transition);
+}
+
+.header-status .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent-yellow);
+    animation: pulse-dot 1.5s ease-in-out infinite;
+    transition: background var(--transition);
+}
+
+.header-status.connected {
+    color: var(--accent-green);
+}
+
+.header-status.connected .status-dot {
+    background: var(--accent-green);
+    animation: none;
+}
+
+.reload-cache-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition);
+    margin-left: 0.5rem;
+}
+
+.reload-cache-btn:hover {
+    color: var(--text-primary);
+    background: var(--bg-surface);
+}
+
+.reload-cache-btn:active {
+    transform: rotate(180deg);
+}
+
+.menu-toggle-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition);
+}
+
+.menu-toggle-btn:hover {
+    color: var(--text-primary);
+    background: var(--bg-surface);
+}
+
+@keyframes pulse-dot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+/* ========================================
+   Pantalla del terminal (xterm.js)
+   ======================================== */
+#screen {
+    flex: 1;
+    background-color: var(--bg-terminal);
+    overflow: hidden;
+    min-height: 0;
+}
+
+/* Ajustes de xterm.js para look premium */
+#screen .xterm {
+    padding: 0.5rem;
+}
+
+#screen .xterm-viewport {
+    scrollbar-width: thin;
+    scrollbar-color: var(--text-muted) transparent;
+}
+
+#screen .xterm-viewport::-webkit-scrollbar {
+    width: 6px;
+}
+
+#screen .xterm-viewport::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#screen .xterm-viewport::-webkit-scrollbar-thumb {
+    background: var(--text-muted);
+    border-radius: 3px;
+}
+
+/* ========================================
+   Overlay de carga
+   ======================================== */
+#loading-overlay {
+    position: absolute;
+    top: 38px; left: 0; right: 0; bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-terminal);
+    z-index: 10;
+    transition: opacity 0.4s ease;
+}
+
+#loading-overlay.fade-out {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.loader {
+    position: relative;
+    width: 64px;
+    height: 64px;
+    margin-bottom: 1.5rem;
+}
+
+.loader-ring {
+    position: absolute;
+    inset: 0;
+    border: 2px solid var(--border-light);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+}
+
+.loader-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--accent);
+    opacity: 0.7;
+}
+
+.loader-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 0.35rem 0;
+    letter-spacing: -0.01em;
+}
+
+.loader-subtitle {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ========================================
+   Barra de herramientas (toolbar)
+   ======================================== */
+#toolbar {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.5rem 0.65rem;
+    background: var(--bg-elevated);
+    border-top: 1px solid var(--border);
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+#toolbar::-webkit-scrollbar {
+    display: none;
+}
+
+.toolbar-group {
+    display: flex;
+    gap: 0.25rem;
+    flex-shrink: 0;
+}
+
+/* Separador visual entre grupos */
+.toolbar-group + .toolbar-group {
+    padding-left: 0.35rem;
+    border-left: 1px solid var(--border-light);
+}
+
+.tool-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.15rem;
+    padding: 0.55rem 0.7rem;
+    background: var(--bg-surface);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    touch-action: manipulation;
+    transition: all var(--transition);
+    white-space: nowrap;
+    min-height: 36px;
+}
+
+.tool-btn:active {
+    transform: scale(0.93);
+    background: var(--accent-glow);
+    border-color: rgba(34, 211, 238, 0.3);
+    color: var(--accent);
+}
+
+.tool-btn--accent {
+    background: rgba(34, 211, 238, 0.08);
+    border-color: rgba(34, 211, 238, 0.2);
+    color: var(--accent);
+}
+
+.tool-btn--accent:active {
+    background: rgba(34, 211, 238, 0.2);
+}
+
+.tool-label {
+    font-size: 0.65rem;
+    opacity: 0.7;
+}
+
+.tool-key {
+    font-weight: 700;
+    font-size: 0.85rem;
+}
+
+.tool-btn--char {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1rem;
+    font-weight: 500;
+    min-width: 36px;
+    padding: 0.55rem 0.5rem;
+}
+
+.tool-btn--arrow {
+    min-width: 36px;
+    padding: 0.55rem;
+}
+
+.tool-btn--arrow svg {
+    display: block;
+}
+
+/* ========================================
+   Responsive: Desktop (≥768px)
+   ======================================== */
+@media (min-width: 768px) {
+    .lessons-panel {
+        width: 280px;
+    }
+}
+
+/* ========================================
+   Modal Dialog
+   ======================================== */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.modal-overlay.is-open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.modal-content {
+    background: var(--bg-surface);
+    width: 90%;
+    max-width: 500px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-light);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    transform: translateY(20px) scale(0.95);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+}
+
+.modal-overlay.is-open .modal-content {
+    transform: translateY(0) scale(1);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-elevated);
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.modal-close-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 4px;
+    display: flex;
+    transition: all var(--transition);
+}
+
+.modal-close-btn:hover {
+    color: var(--accent-red);
+    background: rgba(248, 113, 113, 0.1);
+}
+
+.modal-body {
+    padding: 1.5rem;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.modal-body h4 {
+    color: var(--text-primary);
+    margin: 1.25rem 0 0.5rem 0;
+    font-size: 0.95rem;
+}
+
+.modal-body p {
+    margin: 0 0 0.5rem 0;
+}
+
+.modal-body ul {
+    margin: 0;
+    padding-left: 1.25rem;
+}
+
+.modal-body li {
+    margin-bottom: 0.25rem;
+}
+
+.modal-body strong {
+    color: var(--accent);
+}
