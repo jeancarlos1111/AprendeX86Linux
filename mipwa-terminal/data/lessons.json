@@ -1,0 +1,189 @@
+[
+  {
+    "id": "m1_l1",
+    "module": "1. Primeros Pasos",
+    "title": "¿Dónde estoy parado? (pwd)",
+    "concept": "En Linux, la terminal siempre está dentro de una carpeta (directorio). El comando 'pwd' significa 'Print Working Directory' (Mostrar Directorio de Trabajo) y te dice tu ubicación exacta.",
+    "goal": "Escribe pwd y presiona Enter para ver tu carpeta actual.",
+    "command": "pwd",
+    "chips": ["pwd", "clear", "↵"],
+    "hint": "Escribe las 3 letras 'pwd' y pulsa el botón Enter (↵).",
+    "solution": "pwd"
+  },
+  {
+    "id": "m1_l2",
+    "module": "1. Primeros Pasos",
+    "title": "¿Quién soy en el sistema? (whoami)",
+    "concept": "En Linux cada usuario tiene un nombre y permisos. El comando 'whoami' (¿quién soy yo?) te muestra con qué usuario estás conectado.",
+    "goal": "Escribe whoami y pulsa Enter para descubrir tu usuario.",
+    "command": "whoami",
+    "chips": ["whoami", "pwd", "↵"],
+    "hint": "Escribe 'whoami' tal cual, sin espacios.",
+    "solution": "whoami"
+  },
+  {
+    "id": "m1_l3",
+    "module": "1. Primeros Pasos",
+    "title": "Limpiar la pantalla (clear)",
+    "concept": "Cuando la terminal se llena de texto, puedes limpiarla para trabajar cómodamente usando 'clear'. También puedes presionar el atajo Ctrl + L.",
+    "goal": "Escribe clear para dejar la pantalla limpia.",
+    "command": "clear",
+    "chips": ["clear", "whoami", "↵"],
+    "hint": "Escribe 'clear' y presiona Enter.",
+    "solution": "clear"
+  },
+  {
+    "id": "m2_l1",
+    "module": "2. Explorar Archivos",
+    "title": "Listar archivos (ls)",
+    "concept": "El comando 'ls' (List) es el más usado en Linux. Te muestra todos los archivos y carpetas que están en el lugar donde te encuentras.",
+    "goal": "Escribe ls para ver qué archivos hay aquí.",
+    "command": "ls",
+    "chips": ["ls", "ls -l", "ls -a", "↵"],
+    "hint": "Escribe 'ls' (letra L minúscula y letra S) y presiona Enter.",
+    "solution": "ls"
+  },
+  {
+    "id": "m2_l2",
+    "module": "2. Explorar Archivos",
+    "title": "Ver detalles de archivos (ls -l)",
+    "concept": "Puedes agregar 'opciones' o banderas a los comandos. '-l' significa 'formato largo' (long). Te muestra permisos, dueño, tamaño en bytes y fecha de creación.",
+    "goal": "Escribe ls -l para ver la lista con detalles.",
+    "command": "ls -l",
+    "chips": ["ls -l", "ls", "-l", "↵"],
+    "hint": "Pon un espacio entre 'ls' y '-l'.",
+    "solution": "ls -l"
+  },
+  {
+    "id": "m2_l3",
+    "module": "2. Explorar Archivos",
+    "title": "Archivos ocultos (ls -a)",
+    "concept": "En Linux, los archivos que empiezan con un punto '.' están ocultos (como archivos de configuración). Con '-a' (all) los puedes ver todos.",
+    "goal": "Escribe ls -a para descubrir los archivos ocultos.",
+    "command": "ls -a",
+    "chips": ["ls -a", "ls -la", "-a", "↵"],
+    "hint": "Escribe 'ls -a' o prueba la combinación 'ls -la'.",
+    "solution": "ls -a"
+  },
+  {
+    "id": "m3_l1",
+    "module": "3. Creando Cosas",
+    "title": "Crear tu primera carpeta (mkdir)",
+    "concept": "'mkdir' significa 'Make Directory' (Crear Directorio). Sirve para crear carpetas nuevas donde guardar tus proyectos.",
+    "goal": "Crea una carpeta llamada 'taller' usando mkdir taller.",
+    "command": "mkdir taller",
+    "chips": ["mkdir ", "taller", "ls", "↵"],
+    "hint": "Escribe 'mkdir taller' y luego comprueba que apareció escribiendo 'ls'.",
+    "solution": "mkdir taller"
+  },
+  {
+    "id": "m3_l2",
+    "module": "3. Creando Cosas",
+    "title": "Entrar a una carpeta (cd)",
+    "concept": "'cd' significa 'Change Directory' (Cambiar de Directorio). Es como hacer doble clic en una carpeta para abrirla.",
+    "goal": "Entra a la carpeta que creaste escribiendo cd taller.",
+    "command": "cd taller",
+    "chips": ["cd ", "taller", "cd ..", "pwd", "↵"],
+    "hint": "Escribe 'cd taller'. Verás que tu prompt cambia para indicarte que estás dentro de 'taller'.",
+    "solution": "cd taller"
+  },
+  {
+    "id": "m3_l3",
+    "module": "3. Creando Cosas",
+    "title": "Crear un archivo vacío (touch)",
+    "concept": "El comando 'touch' crea rápidamente un archivo nuevo vacío si no existe, o actualiza su fecha si ya existe.",
+    "goal": "Crea un archivo llamado 'notas.txt' escribiendo touch notas.txt.",
+    "command": "touch notas.txt",
+    "chips": ["touch ", "notas.txt", "ls -l", "↵"],
+    "hint": "Escribe 'touch notas.txt' y luego usa 'ls' para comprobarlo.",
+    "solution": "touch notas.txt"
+  },
+  {
+    "id": "m3_l4",
+    "module": "3. Creando Cosas",
+    "title": "Volver atrás (cd ..)",
+    "concept": "En Linux, los dos puntos '..' siempre representan la 'carpeta padre' (la carpeta de arriba). Para salir de una carpeta y retroceder se usa 'cd ..'.",
+    "goal": "Escribe cd .. para volver a la carpeta anterior.",
+    "command": "cd ..",
+    "chips": ["cd ..", "pwd", "ls", "↵"],
+    "hint": "Fíjate en el espacio: 'cd' luego un espacio y luego '..'.",
+    "solution": "cd .."
+  },
+  {
+    "id": "m4_l1",
+    "module": "4. Escribir y Leer",
+    "title": "Imprimir texto en pantalla (echo)",
+    "concept": "'echo' repite o imprime en la terminal cualquier mensaje que le pases como texto.",
+    "goal": "Escribe echo Hola Linux para imprimir tu primer saludo.",
+    "command": "echo Hola Linux",
+    "chips": ["echo ", "Hola Linux", "↵"],
+    "hint": "Escribe 'echo Hola Linux' y pulsa Enter.",
+    "solution": "echo Hola Linux"
+  },
+  {
+    "id": "m4_l2",
+    "module": "4. Escribir y Leer",
+    "title": "Guardar texto en un archivo (>)",
+    "concept": "El símbolo mayor que '>' es el 'redireccionador'. En lugar de imprimir el texto en pantalla, lo envía y lo guarda dentro de un archivo.",
+    "goal": "Escribe echo \"Aprendiendo x86\" > mensaje.txt para guardarlo en un archivo.",
+    "command": "echo \"Aprendiendo x86\" > mensaje.txt",
+    "chips": ["echo ", "> ", "mensaje.txt", "↵"],
+    "hint": "El operador '>' creará o sobrescribirá el archivo 'mensaje.txt'.",
+    "solution": "echo \"Aprendiendo x86\" > mensaje.txt"
+  },
+  {
+    "id": "m4_l3",
+    "module": "4. Escribir y Leer",
+    "title": "Leer el contenido de un archivo (cat)",
+    "concept": "'cat' viene de 'concatenate' (concatenar). Es el comando más rápido para ver en pantalla todo lo que contiene un archivo de texto.",
+    "goal": "Escribe cat mensaje.txt para leer el archivo que acabas de guardar.",
+    "command": "cat mensaje.txt",
+    "chips": ["cat ", "mensaje.txt", "↵"],
+    "hint": "Escribe 'cat mensaje.txt'. Verás el texto que guardaste en el paso anterior.",
+    "solution": "cat mensaje.txt"
+  },
+  {
+    "id": "m5_l1",
+    "module": "5. Tuberías y Filtros",
+    "title": "Buscar texto con grep",
+    "concept": "'grep' es una herramienta potente que busca palabras específicas dentro de archivos o salidas de comandos.",
+    "goal": "Busca la palabra 'Linux' en la versión del sistema: cat /proc/version | grep Linux.",
+    "command": "cat /proc/version | grep Linux",
+    "chips": ["cat /proc/version", " | ", "grep ", "Linux", "↵"],
+    "hint": "El símbolo de tubería '|' toma la salida del primer comando y se la pasa al segundo.",
+    "solution": "cat /proc/version | grep Linux"
+  },
+  {
+    "id": "m5_l2",
+    "module": "5. Tuberías y Filtros",
+    "title": "Contar líneas (wc -l)",
+    "concept": "'wc' significa 'Word Count'. Con la opción '-l' (lines), cuenta cuántas líneas tiene un archivo o cuántos resultados produjo un comando.",
+    "goal": "Cuenta cuántos programas hay en /bin ejecutando ls /bin | wc -l.",
+    "command": "ls /bin | wc -l",
+    "chips": ["ls /bin", " | ", "wc -l", "↵"],
+    "hint": "Usa la tubería '|' para conectar 'ls /bin' con 'wc -l'.",
+    "solution": "ls /bin | wc -l"
+  },
+  {
+    "id": "m6_l1",
+    "module": "6. Red y Sistema",
+    "title": "Memoria RAM (free -m)",
+    "concept": "'free' muestra cuánta memoria RAM tiene la máquina virtual. La opción '-m' muestra los números en Megabytes.",
+    "goal": "Escribe free -m para ver el estado de la memoria RAM.",
+    "command": "free -m",
+    "chips": ["free -m", "uptime", "uname -a", "↵"],
+    "hint": "Escribe 'free -m' y presiona Enter.",
+    "solution": "free -m"
+  },
+  {
+    "id": "m6_l2",
+    "module": "6. Red y Sistema",
+    "title": "Ver tarjeta de red (ifconfig)",
+    "concept": "'ifconfig' muestra todas las interfaces de red activas en el sistema, su dirección IP y su dirección MAC física.",
+    "goal": "Escribe ifconfig para ver tu interfaz de red eth0.",
+    "command": "ifconfig",
+    "chips": ["ifconfig", "ping -c 2 1.1.1.1", "↵"],
+    "hint": "Escribe 'ifconfig' y busca 'eth0' en el resultado.",
+    "solution": "ifconfig"
+  }
+]

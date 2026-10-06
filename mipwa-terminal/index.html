@@ -14,281 +14,637 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="lib/xterm.css">
     <link rel="stylesheet" href="styles.css">
-    <!-- Carga de xterm.js y emulador V86 -->
+    <!-- Carga de xterm.js, addons, persistencia, lecciones y emulador V86 -->
     <script src="lib/xterm.js"></script>
+    <script src="lib/addon-fit.js"></script>
+    <script src="lib/idb-keyval.js"></script>
     <script src="lib/v86.js"></script>
+    <script src="js/lessons.js"></script>
+    <script src="js/cheatsheet.js"></script>
 </head>
 <body>
     <div class="app-container">
 
-        <!-- Panel lateral de lecciones (desktop) -->
+        <!-- Panel lateral / Drawer de lecciones -->
         <aside class="lessons-panel" id="lessons-panel">
             <div class="lessons-header">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-                <h3>Comandos</h3>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                <h3>Ruta de Aprendizaje</h3>
             </div>
-            <p class="lessons-desc">Haz clic para ejecutar en el terminal</p>
-
-            <div class="lesson-group">
-                <span class="lesson-label">Sistema</span>
-                <button class="lesson-btn" onclick="sendCommand('uname -a\n')">
-                    <span class="cmd-icon">$</span> uname -a
-                </button>
-                <button class="lesson-btn" onclick="sendCommand('cat /proc/cpuinfo\n')">
-                    <span class="cmd-icon">$</span> cat /proc/cpuinfo
-                </button>
-                <button class="lesson-btn" onclick="sendCommand('free -h\n')">
-                    <span class="cmd-icon">$</span> free -h
-                </button>
-                <button class="lesson-btn" onclick="sendCommand('uptime\n')">
-                    <span class="cmd-icon">$</span> uptime
-                </button>
-            </div>
-
-            <div class="lesson-group">
-                <span class="lesson-label">Archivos</span>
-                <button class="lesson-btn" onclick="sendCommand('ls -la\n')">
-                    <span class="cmd-icon">$</span> ls -la
-                </button>
-                <button class="lesson-btn" onclick="sendCommand('pwd\n')">
-                    <span class="cmd-icon">$</span> pwd
-                </button>
-                <button class="lesson-btn" onclick="sendCommand('df -h\n')">
-                    <span class="cmd-icon">$</span> df -h
-                </button>
-            </div>
-
-            <div class="lesson-group">
-                <span class="lesson-label">Procesos</span>
-                <button class="lesson-btn" onclick="sendCommand('top\n')">
-                    <span class="cmd-icon">$</span> top
-                </button>
-                <button class="lesson-btn" onclick="sendCommand('ps aux\n')">
-                    <span class="cmd-icon">$</span> ps aux
-                </button>
-            </div>
-
-            <div class="lesson-group">
-                <span class="lesson-label">Diversión</span>
-                <button class="lesson-btn" onclick="sendCommand('echo Hola Mundo\n')">
-                    <span class="cmd-icon">$</span> echo Hola Mundo
-                </button>
-                <button class="lesson-btn" onclick="sendCommand('date\n')">
-                    <span class="cmd-icon">$</span> date
-                </button>
-            </div>
-            <div class="lesson-group">
-                <span class="lesson-label">Otros</span>
-                <button class="lesson-btn" onclick="showAbout()">
-                    <span class="cmd-icon">ℹ</span> Acerca de
-                </button>
-            </div>
+            <p class="lessons-desc">Selecciona cualquier lección para practicar</p>
+            <div id="drawer-lessons-list"></div>
         </aside>
 
         <!-- Área principal del terminal -->
         <main class="terminal-container">
 
-            <!-- Barra superior tipo título de ventana -->
+            <!-- Barra superior compacta -->
             <header class="terminal-header">
-                <button class="menu-toggle-btn" onclick="toggleMenu()" title="Alternar menú de comandos">
+                <button class="menu-toggle-btn" onclick="toggleMenu()" title="Ver todas las lecciones">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
                 </button>
-                <div class="header-dots">
-                    <span class="dot dot-red"></span>
-                    <span class="dot dot-yellow"></span>
-                    <span class="dot dot-green"></span>
-                </div>
                 <div class="header-title">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
-                    <span>buildroot — bash</span>
+                    <span>Aprende Linux x86</span>
                 </div>
                 <div class="header-status" id="header-status">
                     <span class="status-dot"></span>
-                    <span class="status-text">Conectando...</span>
+                    <span class="status-text">Iniciando...</span>
                 </div>
-                <button class="reload-cache-btn" onclick="forceReload()" title="Limpiar caché y recargar">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-                </button>
+
+                <div class="header-actions">
+                    <button class="header-action-btn" onclick="openCheatsheet()" title="Chuleta de Comandos">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                    </button>
+                    <button class="header-action-btn" onclick="openSettings()" title="Ajustes">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                    </button>
+                </div>
             </header>
 
-            <!-- Overlay de carga -->
+            <!-- Tarjeta interactiva de Lección (Mobile-first) -->
+            <section class="lesson-card" id="lesson-card">
+                <div class="lesson-card-header">
+                    <div class="lesson-badges">
+                        <span class="lesson-module-badge" id="lesson-module">1. Primeros Pasos</span>
+                        <span class="lesson-progress-count" id="lesson-progress-count">1/14</span>
+                    </div>
+                    <div class="lesson-card-nav">
+                        <button class="card-nav-btn" id="btn-prev-lesson" onclick="window.lessonManager.prevLesson()" title="Lección anterior">◂</button>
+                        <button class="card-nav-btn" id="btn-next-lesson" onclick="window.lessonManager.nextLesson()" title="Siguiente lección">▸</button>
+                    </div>
+                </div>
+
+                <h4 class="lesson-title" id="lesson-title">Cargando lección...</h4>
+                <p class="lesson-concept" id="lesson-concept"></p>
+
+                <div class="lesson-goal-row">
+                    <span class="lesson-goal-text" id="lesson-goal"></span>
+                    <div class="lesson-actions">
+                        <button class="action-chip-btn action-chip-btn--primary" onclick="window.lessonManager.pasteExpectedCommand()" title="Pegar comando en la terminal">Pegar 📝</button>
+                        <button class="action-chip-btn" onclick="window.lessonManager.toggleHint()" title="Ver pista">Pista 💡</button>
+                    </div>
+                </div>
+
+                <div class="lesson-hint" id="lesson-hint" style="display: none;"></div>
+            </section>
+
+            <!-- Overlay de carga con contador en vivo -->
             <div id="loading-overlay">
                 <div class="loader">
                     <div class="loader-ring"></div>
                     <svg class="loader-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
                 </div>
-                <p class="loader-title">Iniciando Linux</p>
-                <p class="loader-subtitle">Cargando kernel y sistema de archivos...</p>
+                <p class="loader-title" id="loader-title">Iniciando Linux x86</p>
+                <p class="loader-subtitle" id="loader-subtitle">Cargando sistema...</p>
+                <div class="loader-progress-bar">
+                    <div class="loader-progress-fill" id="loader-progress-fill"></div>
+                </div>
             </div>
 
             <!-- Contenedor del terminal serial xterm.js -->
             <div id="screen"></div>
             
-            <!-- Barra de herramientas para móvil -->
+            <!-- Barra de herramientas móvil en 2 filas -->
             <div id="toolbar">
-                <div class="toolbar-group">
-                    <button class="tool-btn tool-btn--accent" onclick="sendKey('\x03')" title="Ctrl+C">
-                        <span class="tool-label">Ctrl</span><span class="tool-key">C</span>
-                    </button>
-                    <button class="tool-btn" onclick="sendKey('\x1b')" title="Escape">Esc</button>
-                    <button class="tool-btn" onclick="sendKey('\t')" title="Tabulación">Tab</button>
-                </div>
-                <div class="toolbar-group">
-                    <button class="tool-btn tool-btn--char" onclick="sendKey('/')">/</button>
-                    <button class="tool-btn tool-btn--char" onclick="sendKey('-')">-</button>
-                    <button class="tool-btn tool-btn--char" onclick="sendKey('|')">|</button>
-                    <button class="tool-btn tool-btn--char" onclick="sendKey('~')">~</button>
-                </div>
-                <div class="toolbar-group">
-                    <button class="tool-btn tool-btn--arrow" onclick="sendKey('\x1b[A')" title="Arriba">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
-                    </button>
-                    <button class="tool-btn tool-btn--arrow" onclick="sendKey('\x1b[B')" title="Abajo">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-                    </button>
+                <!-- Fila 1: Chips contextuales de comandos específicos -->
+                <div id="context-chips"></div>
+
+                <!-- Fila 2: Teclas fijas de control y navegación -->
+                <div id="fixed-keys">
+                    <div class="toolbar-group">
+                        <button class="tool-btn tool-btn--accent" id="btn-ctrl" onpointerdown="toggleCtrl(event)" title="Ctrl modificador (pegajoso)">
+                            <span class="tool-label">Ctrl</span><span class="tool-key" id="ctrl-state-dot">●</span>
+                        </button>
+                        <button class="tool-btn" onpointerdown="sendKeySeq(event, '\x1b')" title="Escape">Esc</button>
+                        <button class="tool-btn" onpointerdown="sendKeySeq(event, '\t')" title="Tabulación (autocompletar)">Tab</button>
+                        <button class="tool-btn" onpointerdown="sendKeySeq(event, '\r')" title="Enter">↵</button>
+                    </div>
+                    <div class="toolbar-group">
+                        <button class="tool-btn tool-btn--char" onpointerdown="sendKeySeq(event, '/')" title="/">/</button>
+                        <button class="tool-btn tool-btn--char" onpointerdown="sendKeySeq(event, '-')" title="-">-</button>
+                        <button class="tool-btn tool-btn--char" onpointerdown="sendKeySeq(event, '|')" title="|">|</button>
+                        <button class="tool-btn tool-btn--char" onpointerdown="sendKeySeq(event, '~')" title="~">~</button>
+                        <button class="tool-btn tool-btn--char" onpointerdown="sendKeySeq(event, '>')" title=">">&gt;</button>
+                        <button class="tool-btn tool-btn--char" onpointerdown="sendKeySeq(event, '$')" title="$">$</button>
+                        <button class="tool-btn tool-btn--char" onpointerdown="sendKeySeq(event, '&')" title="&">&amp;</button>
+                        <button class="tool-btn tool-btn--char" onpointerdown="sendKeySeq(event, ';')" title=";">;</button>
+                        <button class="tool-btn tool-btn--char" onpointerdown="sendKeySeq(event, '\"')" title="Comilla">"</button>
+                    </div>
+                    <div class="toolbar-group">
+                        <button class="tool-btn tool-btn--arrow" onpointerdown="sendKeySeq(event, '\x1b[D')" title="Izquierda">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+                        </button>
+                        <button class="tool-btn tool-btn--arrow" onpointerdown="sendKeySeq(event, '\x1b[A')" title="Arriba">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+                        </button>
+                        <button class="tool-btn tool-btn--arrow" onpointerdown="sendKeySeq(event, '\x1b[B')" title="Abajo">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                        </button>
+                        <button class="tool-btn tool-btn--arrow" onpointerdown="sendKeySeq(event, '\x1b[C')" title="Derecha">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                        </button>
+                    </div>
                 </div>
             </div>
         </main>
     </div>
 
-    <!-- Modal "Acerca de" -->
+    <!-- Toast feedback -->
+    <div id="toast" class="toast-msg"></div>
+
+    <!-- Modal Chuleta (Cheatsheet) -->
+    <div id="cheatsheet-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📖 Chuleta de Comandos Linux</h3>
+                <button class="modal-close-btn" onclick="closeCheatsheet()">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="cheat-search-box">
+                    <input type="text" id="cheatsheet-search" class="cheat-search-input" placeholder="Buscar comando (ej. ls, pwd, red)..." oninput="window.cheatsheetManager.renderList()">
+                </div>
+                <div class="cheat-filters-row" id="cheatsheet-filters"></div>
+                <div class="cheatsheet-cards-list" id="cheatsheet-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Ajustes -->
+    <div id="settings-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>⚙ Ajustes y Sesión</h3>
+                <button class="modal-close-btn" onclick="closeSettings()">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h4>Tamaño de texto en terminal:</h4>
+                <div style="display:flex; gap:0.5rem; margin-bottom:1.2rem;">
+                    <button class="action-chip-btn" onclick="fontScale(-1)" style="flex:1;">A− Reducir</button>
+                    <button class="action-chip-btn" onclick="fontScale(1)" style="flex:1;">A+ Aumentar</button>
+                </div>
+
+                <h4>Persistencia en memoria:</h4>
+                <div style="display:flex; flex-direction:column; gap:0.5rem; margin-bottom:1.2rem;">
+                    <button class="action-chip-btn action-chip-btn--primary" onclick="saveSessionState()">💾 Guardar estado de la máquina</button>
+                    <button class="action-chip-btn" onclick="clearSessionState()">🗑️ Borrar estado guardado</button>
+                </div>
+
+                <h4>Mantenimiento:</h4>
+                <div style="display:flex; flex-direction:column; gap:0.5rem;">
+                    <button class="action-chip-btn" onclick="forceReload()">🔄 Limpiar caché y recargar PWA</button>
+                    <button class="action-chip-btn" onclick="showAbout()">ℹ Acerca de AprendeX86</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Acerca de -->
     <div id="about-modal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Acerca de AprendeX86</h3>
                 <button class="modal-close-btn" onclick="closeAbout()">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                 </button>
             </div>
             <div class="modal-body">
-                <p><strong>Simulador de Sistema Operativo Linux</strong> en Arquitectura x86 corriendo nativamente en el navegador. Diseñado como PWA (Progressive Web App) para móviles.</p>
-                
-                <h4>Tecnologías utilizadas:</h4>
-                <ul>
-                    <li><strong>v86</strong> - Emulador x86 a WebAssembly</li>
-                    <li><strong>Buildroot</strong> - Kernel Linux + Initramfs ultraligero</li>
-                    <li><strong>xterm.js</strong> - Renderizado avanzado de terminal</li>
-                    <li><strong>HTML/CSS/JS</strong> - Interfaz estática sin frameworks</li>
-                    <li><strong>Service Worker</strong> - Caché offline y capacidades PWA</li>
-                </ul>
-                
-                <h4>Licencia:</h4>
-                <p>MIT 2026 jean zamora</p>
-                <h4>Para IGS-UBV - Cátedra Arquitectura de Computadores</h4>
+                <p><strong>AprendeX86</strong> es una plataforma interactiva para aprender a dominar el terminal Linux desde el móvil, ejecutando un sistema x86 real emulado en WebAssembly sin necesidad de servidores externos.</p>
+                <p>Desarrollado para <strong>IGS-UBV — Arquitectura de Computadores</strong>.</p>
             </div>
         </div>
     </div>
 
     <script>
-        // Registro del Service Worker
+        // Registro del Service Worker con auto-recarga cuando hay actualización
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js')
-                    .then(registration => console.log('SW registrado', registration.scope))
+                    .then(reg => {
+                        console.log('SW registrado', reg.scope);
+                        reg.onupdatefound = () => {
+                            const installingWorker = reg.installing;
+                            installingWorker.onstatechange = () => {
+                                if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    showToast('Nueva versión detectada. Actualizando...');
+                                    setTimeout(() => window.location.reload(), 800);
+                                }
+                            };
+                        };
+                    })
                     .catch(err => console.error('SW fallo', err));
             });
         }
 
-        // Configuración e inicialización de v86 con Buildroot Linux (bzImage + initramfs)
-        const emulator = new V86({
-            wasm_path: "lib/v86.wasm",
-            bios: { url: "lib/seabios.bin" },
-            vga_bios: { url: "lib/vgabios.bin" },
-            memory_size: 128 * 1024 * 1024,
-            bzimage: { url: "assets/buildroot-bzimage.bin" },
-            cmdline: "console=ttyS0",
-            disable_keyboard: false,
-            network_relay_url: "wss://relay.widgetry.org/",
-            filesystem: {},
-            serial_container_xtermjs: document.getElementById("screen"),
-            autostart: true
+        // Feedback visual tipo Toast
+        function showToast(text, duration = 2500) {
+            const toast = document.getElementById('toast');
+            toast.textContent = text;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), duration);
+        }
+
+        // Control de tamaño de fuente
+        let currentFontSize = parseInt(localStorage.getItem('terminal_fontsize') || '14', 10);
+        function fontScale(delta) {
+            currentFontSize = Math.min(22, Math.max(10, currentFontSize + delta));
+            localStorage.setItem('terminal_fontsize', currentFontSize);
+            term.options.fontSize = currentFontSize;
+            fitAddon.fit();
+            syncTerminalSizeToKernel();
+            showToast(`Fuente: ${currentFontSize}px`, 1200);
+        }
+
+        // Inicializar terminal independiente xterm.js con FitAddon
+        const screenEl = document.getElementById("screen");
+        const term = new Terminal({
+            fontFamily: "'JetBrains Mono', monospace, 'Courier New', Courier",
+            fontSize: currentFontSize,
+            lineHeight: 1.15,
+            cursorBlink: true,
+            cursorStyle: 'block',
+            convertEol: true,
+            theme: {
+                background: '#0d1117',
+                foreground: '#e2e8f0',
+                cursor: '#22d3ee',
+                cursorAccent: '#0d1117',
+                selectionBackground: 'rgba(34, 211, 238, 0.3)',
+                black: '#111827',
+                red: '#f87171',
+                green: '#34d399',
+                yellow: '#fbbf24',
+                blue: '#60a5fa',
+                magenta: '#c084fc',
+                cyan: '#22d3ee',
+                white: '#f1f5f9',
+                brightBlack: '#475569',
+                brightRed: '#ef4444',
+                brightGreen: '#10b981',
+                brightYellow: '#f59e0b',
+                brightBlue: '#3b82f6',
+                brightMagenta: '#a855f7',
+                brightCyan: '#06b6d4',
+                brightWhite: '#ffffff'
+            }
         });
 
-        // Ocultar overlay, actualizar estado y limpiar pantalla al detectar el prompt
+        const fitAddon = new FitAddon.FitAddon();
+        term.loadAddon(fitAddon);
+        term.open(screenEl);
+
+        // Desactivar autocorrección en el textarea oculto de xterm para móviles
+        setTimeout(() => {
+            const termTextarea = screenEl.querySelector('textarea');
+            if (termTextarea) {
+                termTextarea.setAttribute('autocorrect', 'off');
+                termTextarea.setAttribute('autocapitalize', 'off');
+                termTextarea.setAttribute('autocomplete', 'off');
+                termTextarea.setAttribute('spellcheck', 'false');
+            }
+        }, 100);
+
+        function updateDimsLabel() {
+            const dimsEl = document.getElementById('term-dims');
+            if (dimsEl && term) {
+                dimsEl.textContent = `${term.cols}x${term.rows}`;
+            }
+        }
+
+        function fitTerminal() {
+            try {
+                fitAddon.fit();
+                updateDimsLabel();
+            } catch (e) {
+                console.warn('fit error', e);
+            }
+        }
+
+        // Ajuste en cambio de tamaño y orientación
+        const resizeObserver = new ResizeObserver(() => fitTerminal());
+        resizeObserver.observe(screenEl);
+        window.addEventListener('resize', () => fitTerminal());
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', () => fitTerminal());
+        }
+        setTimeout(fitTerminal, 50);
+
+        // Control de modificador Ctrl pegajoso para teclados móviles
+        let ctrlActive = false;
+        function toggleCtrl(event) {
+            event.preventDefault();
+            ctrlActive = !ctrlActive;
+            const btn = document.getElementById('btn-ctrl');
+            if (ctrlActive) {
+                btn.classList.add('is-active');
+            } else {
+                btn.classList.remove('is-active');
+            }
+            term.focus();
+        }
+
+        function sendKeySeq(event, seq) {
+            if (event) {
+                event.preventDefault();
+            }
+            if (emulator) {
+                emulator.serial0_send(seq);
+            }
+            term.focus();
+        }
+
+        // Manejo de entrada por teclado físico o virtual
+        window.term = term;
+        term.onData((data) => {
+            if (window.lessonManager && typeof window.lessonManager.onTerminalByte === 'function') {
+                window.lessonManager.onTerminalByte(data);
+            }
+            if (!emulator) return;
+            if (ctrlActive) {
+                ctrlActive = false;
+                document.getElementById('btn-ctrl').classList.remove('is-active');
+                if (data.length === 1) {
+                    const charCode = data.toUpperCase().charCodeAt(0);
+                    if (charCode >= 64 && charCode <= 95) {
+                        emulator.serial0_send(String.fromCharCode(charCode - 64));
+                        return;
+                    }
+                }
+            }
+            emulator.serial0_send(data);
+        });
+
+        // Configuración de v86 con red y memoria
+        let emulator = null;
         let booted = false;
-        let bootText = "";
-        
+        let bootBuffer = "";
+        const STATE_KEY = 'v86_last_session_state';
+
+        async function initEmulator() {
+            let initialState = null;
+            try {
+                if (window.idbKeyval) {
+                    initialState = await idbKeyval.get(STATE_KEY);
+                    if (initialState) {
+                        showToast('Restaurando sesión previa guardada...');
+                    }
+                }
+            } catch (err) {
+                console.warn('Error leyendo estado previo:', err);
+            }
+
+            const config = {
+                wasm_path: "lib/v86.wasm",
+                bios: { url: "lib/seabios.bin" },
+                vga_bios: { url: "lib/vgabios.bin" },
+                memory_size: 128 * 1024 * 1024,
+                cmdline: "console=ttyS0",
+                disable_keyboard: false,
+                disable_mouse: true,
+                network_relay_url: "wss://relay.widgetry.org/",
+                net_device: { type: "ne2k" },
+                autostart: true
+            };
+
+            if (initialState) {
+                config.initial_state = { buffer: initialState };
+            } else {
+                config.bzimage = { url: "assets/buildroot-bzimage.bin" };
+            }
+
+            try {
+                emulator = new V86(config);
+                window.emulator = emulator;
+            } catch (err) {
+                console.error("Error iniciando v86:", err);
+                const sub = document.getElementById('loader-subtitle');
+                if (sub) sub.textContent = "Error iniciando emulador: " + err.message;
+                return;
+            }
+
+            let writeBuffer = [];
+            let flushScheduled = false;
+
+            function flushTerminalWrites() {
+                if (writeBuffer.length > 0) {
+                    const chunk = new Uint8Array(writeBuffer);
+                    writeBuffer = [];
+                    term.write(chunk);
+                }
+                flushScheduled = false;
+            }
+
+            let firstByteReceived = false;
+
+            // Puente serial: v86 serial0 -> xterm.js
+            emulator.add_listener("serial0-output-byte", function(byte) {
+                if (!firstByteReceived) {
+                    firstByteReceived = true;
+                    // Ocultar overlay al recibir primer byte para ver la salida del kernel de inmediato
+                    hideOverlay();
+                }
+
+                writeBuffer.push(byte);
+                if (!flushScheduled) {
+                    flushScheduled = true;
+                    requestAnimationFrame(flushTerminalWrites);
+                }
+                
+                if (!booted) {
+                    bootBuffer += String.fromCharCode(byte);
+                    if (bootBuffer.length > 256) {
+                        bootBuffer = bootBuffer.slice(-256);
+                    }
+                    if (bootBuffer.includes("~% ") || bootBuffer.includes("login: ") || bootBuffer.includes("# ") || bootBuffer.includes("$ ")) {
+                        onBoot();
+                    }
+                }
+            });
+
+            // Progreso de descarga
+            let downloadDone = false;
+            emulator.add_listener("download-progress", function(e) {
+                if (e && e.total) {
+                    const percent = Math.min(100, Math.round((e.loaded / e.total) * 100));
+                    const fill = document.getElementById('loader-progress-fill');
+                    if (fill) fill.style.width = percent + '%';
+                    const sub = document.getElementById('loader-subtitle');
+                    if (sub) sub.textContent = `Descargando sistema (${percent}%)...`;
+                    if (percent >= 100) {
+                        downloadDone = true;
+                    }
+                }
+            });
+
+            // Contador de descompresión en memoria
+            let bootSeconds = 0;
+            const bootTimer = setInterval(() => {
+                bootSeconds++;
+                if (!firstByteReceived) {
+                    const sub = document.getElementById('loader-subtitle');
+                    if (sub && downloadDone) {
+                        sub.textContent = `Descomprimiendo kernel en CPU (${bootSeconds}s)...`;
+                    }
+                } else {
+                    clearInterval(bootTimer);
+                }
+            }, 1000);
+
+            emulator.add_listener("emulator-ready", function() {
+                fitTerminal();
+            });
+        }
+
+        function hideOverlay() {
+            const overlay = document.getElementById("loading-overlay");
+            if (overlay && overlay.style.display !== "none") {
+                overlay.classList.add("fade-out");
+                setTimeout(() => {
+                    overlay.style.display = "none";
+                    fitTerminal();
+                    term.focus();
+                }, 300);
+            }
+        }
+
+        function syncTerminalSizeToKernel() {
+            if (emulator && booted && term) {
+                // Notificar dimensiones al sistema operativo para vi, top, less
+                emulator.serial0_send(`stty rows ${term.rows} cols ${term.cols} 2>/dev/null\n`);
+            }
+        }
+
         function onBoot() {
             if (booted) return;
             booted = true;
-            
-            // 1. Ocultar el overlay
-            const overlay = document.getElementById("loading-overlay");
-            if (overlay) {
-                overlay.classList.add("fade-out");
-                setTimeout(() => overlay.style.display = "none", 400);
-            }
-            
-            // 2. Actualizar estado
+            hideOverlay();
+
             const status = document.getElementById("header-status");
             status.classList.add("connected");
-            status.querySelector(".status-text").textContent = "Conectado";
-            
-            // 3. Modificar el prompt a uno moderno ($) y limpiar la terminal
+            status.querySelector(".status-text").textContent = "En línea";
+
+            fitTerminal();
+            term.focus();
+
             setTimeout(() => {
-                emulator.serial0_send('export PS1="\\w $ "\nclear\n');
-            }, 100);
+                syncTerminalSizeToKernel();
+                // Activar red automáticamente en segundo plano
+                emulator.serial0_send('udhcpc -b -s /usr/share/udhcpc/default.script -i eth0 >/dev/null 2>&1 &\n');
+            }, 300);
         }
 
-        // Fallback: Si después de 15 segundos no detectamos el prompt, mostramos la pantalla de todos modos
-        setTimeout(onBoot, 15000);
-
-        emulator.add_listener("serial0-output-char", function(char) {
-            if (!booted) {
-                bootText += char;
-                console.log(char); // Para ver qué imprime realmente el boot en DevTools
-                
-                // Detectar posibles prompts finales
-                if (bootText.includes("~% ") || bootText.includes("login: ") || bootText.includes("buildroot login:")) {
-                    onBoot();
-                }
-            }
-        });
-
-        function sendKey(seq) {
-            emulator.serial0_send(seq);
-        }
+        // Si tras 8 segundos de descompresión no han llegado bytes, mostrar la terminal igual para ver la salida
+        setTimeout(() => {
+            hideOverlay();
+        }, 8000);
 
         function sendCommand(cmd) {
+            if (!emulator) return;
             emulator.serial0_send(cmd);
+            term.focus();
+            if (window.innerWidth < 768) {
+                const panel = document.getElementById("lessons-panel");
+                if (panel.classList.contains("is-open")) {
+                    panel.classList.remove("is-open");
+                }
+            }
         }
 
-        // Función para alternar el menú lateral
+        // Guardar y restaurar sesión en IndexedDB
+        async function saveSessionState() {
+            if (!emulator) return;
+            showToast('Guardando sesión en almacenamiento local...');
+            try {
+                const state = await emulator.save_state();
+                if (window.idbKeyval && state) {
+                    await idbKeyval.set(STATE_KEY, state);
+                    showToast('¡Sesión guardada con éxito! Se restaurará al volver.');
+                }
+            } catch (err) {
+                console.error('Error guardando estado:', err);
+                showToast('Error al guardar la sesión');
+            }
+            term.focus();
+        }
+
+        async function clearSessionState() {
+            try {
+                if (window.idbKeyval) {
+                    await idbKeyval.del(STATE_KEY);
+                    showToast('Sesión guardada eliminada. Reiniciando...');
+                    setTimeout(() => window.location.reload(), 1000);
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
         function toggleMenu() {
             const panel = document.getElementById("lessons-panel");
             panel.classList.toggle("is-open");
         }
 
-        // Función para limpiar el Service Worker y forzar recarga
-        function forceReload() {
+        async function forceReload() {
+            showToast('Limpiando cachés y reiniciando...');
             if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.getRegistrations().then(function(registrations) {
-                    for(let registration of registrations) {
-                        registration.unregister();
+                try {
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    for (let reg of registrations) {
+                        await reg.unregister();
                     }
-                    window.location.reload(true);
-                });
-            } else {
-                window.location.reload(true);
+                } catch(e) {}
             }
+            if ('caches' in window) {
+                try {
+                    const keys = await caches.keys();
+                    for (let k of keys) {
+                        await caches.delete(k);
+                    }
+                } catch(e) {}
+            }
+            window.location.reload();
         }
 
-        // Función para mostrar el modal "Acerca de"
         function showAbout() {
             document.getElementById('about-modal').classList.add('is-open');
-            // Cerrar el panel de lecciones automáticamente en móviles
             if (window.innerWidth < 768) {
                 const panel = document.getElementById("lessons-panel");
-                if(panel.classList.contains('is-open')) {
+                if (panel.classList.contains('is-open')) {
                     panel.classList.remove('is-open');
                 }
             }
         }
 
-        // Función para cerrar el modal "Acerca de"
         function closeAbout() {
             document.getElementById('about-modal').classList.remove('is-open');
+            term.focus();
         }
+
+        function openSettings() {
+            document.getElementById('settings-modal').classList.add('is-open');
+            if (window.innerWidth < 768) {
+                const panel = document.getElementById("lessons-panel");
+                if (panel && panel.classList.contains('is-open')) {
+                    panel.classList.remove('is-open');
+                }
+            }
+        }
+
+        function closeSettings() {
+            document.getElementById('settings-modal').classList.remove('is-open');
+            term.focus();
+        }
+
+        // Cargar lecciones educativas
+        if (window.lessonManager) {
+            window.lessonManager.init();
+        }
+
+        // Arrancar VM
+        initEmulator();
     </script>
 </body>
 </html>

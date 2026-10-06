@@ -1,22 +1,26 @@
 {
-  "name": "Terminal Linux Móvil",
-  "short_name": "Terminal",
-  "start_url": ".",
+  "name": "Simulador AprendeX86 - Terminal Linux",
+  "short_name": "AprendeX86",
+  "id": "/mipwa-terminal/",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
-  "background_color": "#000000",
-  "theme_color": "#000000",
+  "orientation": "any",
+  "background_color": "#0a0e17",
+  "theme_color": "#111827",
+  "description": "Simulador de Linux en Arquitectura x86 vía WebAssembly",
   "icons": [
     {
       "src": "assets/icon-192x192.png",
-      "sizes": "any",
+      "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
       "src": "assets/icon-512x512.png",
-      "sizes": "any",
+      "sizes": "512x512",
       "type": "image/png",
-      "purpose": "maskable"
+      "purpose": "any maskable"
     }
   ]
 }
